@@ -1,12 +1,18 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { DatabaseService } from './common/database.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly dataBaseService: DatabaseService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @Get('health')
+  async getHealth(): Promise<boolean> {
+    try {
+      await this.dataBaseService.$queryRaw`SELECT 1`;
+      return true;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
   }
 }
